@@ -1,0 +1,259 @@
+drop schema public cascade;
+DROP TABLE IF EXISTS PUBLIC.EDITORIAL cascade;
+DROP TABLE IF EXISTS public.libro cascade;
+DROP TABLE IF EXISTS public.ejemplar cascade;
+DROP TABLE IF EXISTS public.autor cascade;
+DROP TABLE IF EXISTS public.personaje cascade;
+DROP TABLE IF EXISTS public.escrito_por cascade;
+DROP TABLE IF EXISTS public.participan cascade;
+DROP TABLE IF EXISTS public.socio cascade;
+DROP TABLE IF EXISTS public.alquiler cascade;
+DROP TABLE IF EXISTS public.pertenece cascade;
+create schema public;
+CREATE TABLE IF NOT EXISTS public.editorial (
+  ideditorial INT NOT NULL,
+  nombre VARCHAR(45) NULL,
+  direccion VARCHAR(45) NULL,
+  telefono INT NULL);
+ALTER TABLE public.editorial ADD CONSTRAINT Pk_editorial PRIMARY KEY(ideditorial);
+
+INSERT INTO public.editorial (ideditorial, nombre, direccion, telefono) VALUES (1, 'anagrama', 'barcelona', 1125474854);
+INSERT INTO public.editorial (ideditorial, nombre, direccion, telefono) VALUES (2, 'sol90', 'barcelona', 1125474111);
+INSERT INTO public.editorial (ideditorial, nombre, direccion, telefono) VALUES (3, 'planeta', 'costa rica', 112624829);
+INSERT INTO public.editorial (ideditorial, nombre, direccion, telefono) VALUES (4, 'alianza', 'nueva york', 1135874650);
+INSERT INTO public.editorial (ideditorial, nombre, direccion, telefono) VALUES (5, 'catedra', 'madrid', 1195474181);
+INSERT INTO public.editorial (ideditorial, nombre, direccion, telefono) VALUES (6, 'Aranzadi', 'andorra', 117546523);
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS public.libro (
+  isbn varchar(18) NOT NULL,
+  titulo VARCHAR(45) NULL,
+  genero VARCHAR(45) NULL,
+  ideditorial INT NULL,
+  CONSTRAINT Fk_libro_editorial
+	FOREIGN KEY (ideditorial)
+    REFERENCES public.editorial (ideditorial)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+;
+ALTER TABLE public.libro ADD CONSTRAINT Pk_libro PRIMARY KEY(isbn);
+
+INSERT INTO public.libro (isbn,titulo,genero,ideditorial) VALUES ('84-95594-07-02', 'La metamorfosis', 'drama',1);
+INSERT INTO public.libro (isbn,titulo,genero,ideditorial) VALUES ('978-84-339-9788', 'tambien esto pasara', 'autoayuda',2);
+INSERT INTO public.libro (isbn,titulo,genero,ideditorial) VALUES ('950-731-490-3', 'hombres y engranajes', 'drama', 3);
+INSERT INTO public.libro (isbn,titulo,genero,ideditorial) VALUES ('741-955-044-102', 'Harry Potter y la piedra filosofal', 'ficcion',4);
+INSERT INTO public.libro (isbn,titulo,genero,ideditorial) VALUES ('7798-814-039-788', 'orgullo y prejuicio', 'autoayuda',5);
+INSERT INTO public.libro (isbn,titulo,genero,ideditorial) VALUES ('904-013-3039-788', 'It', 'terror',6);
+INSERT INTO public.libro (isbn,titulo,genero,ideditorial) VALUES ('955-733-510-789', 'Harry Potter y la camara secreta', 'ficcion',4);
+
+
+
+
+CREATE TABLE IF NOT EXISTS public.ejemplar (
+  idejemplar INT NOT NULL,
+  isbn VARCHAR(18) NOT NULL,
+	fecha DATE NULL,
+  precio DECIMAL(12,2) NULL,
+  CONSTRAINT fk_ejemplar_libro
+    FOREIGN KEY (isbn)
+    REFERENCES public.libro (isbn)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+;
+ALTER TABLE public.ejemplar ADD CONSTRAINT Pk_ejemplar PRIMARY KEY(isbn, idejemplar);
+
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (1,'84-95594-07-02','01-09-1998',145);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (2,'84-95594-07-02','01-09-1999',130);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (3,'84-95594-07-02','01-09-2010',165);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (1,'978-84-339-9788','01-09-2018',180);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (2,'978-84-339-9788','01-09-2018',180);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (1,'950-731-490-3','01-03-2021',180);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (2,'950-731-490-3','01-03-2021',180);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (1,'741-955-044-102','04-10-2008',170);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (2,'741-955-044-102','04-10-2008',195);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (3,'741-955-044-102','04-10-2008',125);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (1,'7798-814-039-788','03-02-2011',181);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (2,'7798-814-039-788','03-02-2011',189);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (1,'904-013-3039-788','01-03-2021',178);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (2,'904-013-3039-788','01-09-2018',163);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (3,'904-013-3039-788','01-03-2021',184);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (4,'904-013-3039-788','01-03-2021',154);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (5,'904-013-3039-788','01-03-2021',194);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (4,'84-95594-07-02','01-09-2019',165);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (1,'955-733-510-789','03-04-2002',185);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (2,'955-733-510-789','04-01-2002',189);
+INSERT INTO public.ejemplar (idejemplar,isbn,fecha,precio) VALUES (3,'955-733-510-789','09-03-2002',188);
+
+
+
+
+CREATE TABLE IF NOT EXISTS public.autor (
+  idautor INT NOT NULL,
+  nombre VARCHAR(45) NULL,
+  nacionalidad VARCHAR(45) NULL,
+  fecha_nac DATE NOT NULL)
+;
+ALTER TABLE public.autor ADD CONSTRAINT Pk_autor PRIMARY KEY(idautor);
+
+INSERT INTO public.autor (idautor,nombre,nacionalidad,fecha_nac) VALUES (1,'Ernesto Sabato','Argentina','24-06-1911');
+INSERT INTO public.autor (idautor,nombre,nacionalidad,fecha_nac) VALUES (2,'Franz Kafka','checoslovaquia','03-07-1883');
+INSERT INTO public.autor (idautor,nombre,nacionalidad,fecha_nac) VALUES (3,'Melina Busquets','España','01-01-1972');
+INSERT INTO public.autor (idautor,nombre,nacionalidad,fecha_nac) VALUES (4,'Luis Borges','Argentina','24-08-1899');
+INSERT INTO public.autor (idautor,nombre,nacionalidad,fecha_nac) VALUES (6,'Jorge Rafael','Reino Unido','03-02-1846');
+INSERT INTO public.autor (idautor,nombre,nacionalidad,fecha_nac) VALUES (9,'Stephen king','Estados Unidos','21-09-1947');
+
+
+CREATE TABLE IF NOT EXISTS public.personaje (
+  idpersonaje INT NOT NULL,
+  nombre VARCHAR(45) NULL,
+  descripcion VARCHAR(45) NULL)
+;
+ALTER TABLE public.personaje ADD CONSTRAINT Pk_personaje PRIMARY KEY(idpersonaje);
+
+INSERT INTO public.personaje (idpersonaje,nombre,descripcion) VALUES (1,'Gregorio Samsa','de La metamorfosis');
+INSERT INTO public.personaje (idpersonaje,nombre,descripcion) VALUES (2,'blanca','de esto tambien pasara');
+INSERT INTO public.personaje (idpersonaje,nombre,descripcion) VALUES (3,'Harry Potter','Harry Potter y la piedra filosofal');
+INSERT INTO public.personaje (idpersonaje,nombre,descripcion) VALUES (4,'Jose','orgullo y prejuicio');
+INSERT INTO public.personaje (idpersonaje,nombre,descripcion) VALUES (5,'Pennywise','It');
+
+
+
+CREATE TABLE IF NOT EXISTS public.escrito_por (
+  idautor INT NOT NULL,
+  isbn VARCHAR(18) NOT NULL,
+  CONSTRAINT fk_escrito_por_libro
+    FOREIGN KEY (isbn)
+    REFERENCES public.libro (isbn)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_escrito_por_autor
+    FOREIGN KEY (idautor)
+    REFERENCES public.autor (idautor)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+ALTER TABLE public.escrito_por ADD CONSTRAINT Pk_escrito_por PRIMARY KEY(idautor, isbn);
+
+INSERT INTO public.escrito_por (idautor,isbn) VALUES (1,'950-731-490-3');
+INSERT INTO public.escrito_por (idautor,isbn) VALUES (3,'978-84-339-9788');
+INSERT INTO public.escrito_por (idautor,isbn) VALUES (2,'84-95594-07-02');
+INSERT INTO public.escrito_por (idautor,isbn) VALUES (4,'741-955-044-102');
+INSERT INTO public.escrito_por (idautor,isbn) VALUES (9,'904-013-3039-788');
+INSERT INTO public.escrito_por (idautor,isbn) VALUES (6,'7798-814-039-788');
+INSERT INTO public.escrito_por (idautor,isbn) VALUES (4,'955-733-510-789');
+
+
+CREATE TABLE IF NOT EXISTS public.participan (
+  isbn VARCHAR(18) NOT NULL,
+  idpersonaje INT NOT NULL,
+
+  CONSTRAINT fk_participan_personaje
+    FOREIGN KEY (idpersonaje)
+    REFERENCES public.personaje (idpersonaje)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_participan_libro
+    FOREIGN KEY (isbn)
+    REFERENCES public.libro (isbn)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+;
+ALTER TABLE public.participan ADD CONSTRAINT Pk_participan PRIMARY KEY(isbn, idpersonaje);
+
+INSERT INTO public.participan (isbn,idpersonaje) VALUES ('84-95594-07-02',1);
+INSERT INTO public.participan (isbn,idpersonaje) VALUES ('950-731-490-3',2);
+INSERT INTO public.participan (isbn,idpersonaje) VALUES ('741-955-044-102',3);
+INSERT INTO public.participan (isbn,idpersonaje) VALUES ('7798-814-039-788',4);
+INSERT INTO public.participan (isbn,idpersonaje) VALUES ('904-013-3039-788',5);
+INSERT INTO public.participan (isbn,idpersonaje) VALUES ('955-733-510-789',3);
+
+
+CREATE TABLE IF NOT EXISTS public.socio (
+  idsocio INT NOT NULL,
+  fecha_ingreso DATE NULL,
+  nombre VARCHAR(45) NULL,
+  localidad VARCHAR(45) NULL,
+  domicilio VARCHAR(45) NULL,
+  telefono INT NULL)
+;
+ALTER TABLE public.socio ADD CONSTRAINT Pk_socio PRIMARY KEY(idsocio);
+
+INSERT INTO public.socio (idsocio,fecha_ingreso,nombre,localidad,domicilio,telefono) VALUES (1,'01-09-21','pablo gamarra','merlo','casanova 123',112345543);
+INSERT INTO public.socio (idsocio,fecha_ingreso,nombre,localidad,domicilio,telefono) VALUES (2,'01-10-21','nicolas gonzales','merlo','sarmiento 123',112541445);
+INSERT INTO public.socio (idsocio,fecha_ingreso,nombre,localidad,domicilio,telefono) VALUES (3,'01-11-10','Jose Martinez','padua','pelegrini 163',119525543);
+INSERT INTO public.socio (idsocio,fecha_ingreso,nombre,localidad,domicilio,telefono) VALUES (4,'02-02-11','Emanuel Torres','Moreno','Rafael 521',112745845);
+INSERT INTO public.socio (idsocio,fecha_ingreso,nombre,localidad,domicilio,telefono) VALUES (5,'03-04-13','Martin Eduardo','Ituzaingo','Real 510',11321456);
+INSERT INTO public.socio (idsocio,fecha_ingreso,nombre,localidad,domicilio,telefono) VALUES (6,'05-03-12','Javier Edgar','Moreno','san martin 523',11985421);
+INSERT INTO public.socio (idsocio,fecha_ingreso,nombre,localidad,domicilio,telefono) VALUES (7,'05-03-12','Marcos Silva','Ituzaingo','mitre 345',11971401);
+
+
+CREATE TABLE IF NOT EXISTS public.alquiler (
+  nrofac INT NOT NULL,
+  fecha_alquiler DATE NOT NULL,
+  fecha_devolucion DATE NOT NULL,
+fecha_dev_real date NULL,
+  idsocio INT NOT NULL,
+  
+  CONSTRAINT fk_alquiler_socio
+    FOREIGN KEY (idsocio)
+    REFERENCES public.socio (idsocio)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+;
+ALTER TABLE public.alquiler ADD CONSTRAINT Pk_alquiler PRIMARY KEY(nrofac);
+
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (10,'14-08-21','24-08-21', '25-08-21',1);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (11,'15-11-21','25-11-21', '28-11-21',2);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (12,'12-06-15','19-06-15', '21-06-15',3);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (13,'19-10-21','24-10-21', '27-10-21',4);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (14,'17-07-21','23-07-21', '22-07-21',5);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (15,'10-08-21','16-08-21', '17-08-21',5);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (16,'20-07-19','28-07-19', '31-07-19',3);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (17,'13-05-20','19-05-20', '22-05-20',5);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (18,'17-02-21','21-02-21', '23-02-21',4);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (19,'02-12-21','05-12-21', '09-12-21',2);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (20,'17-03-21','21-03-21', '23-03-21',1);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (21,'02-04-21','05-04-21', '09-04-21',1);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (22,'01-04-21','05-04-21', '09-04-21',6);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (23,'01-02-22','05-02-22', '09-02-22',3);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (24,'02-03-19','09-03-19', '11-03-19',4);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (25,'03-04-21','05-04-21', '09-04-21',5);
+INSERT INTO public.alquiler (nrofac,fecha_alquiler,fecha_devolucion,fecha_dev_real,idsocio) VALUES (26,'02-02-21','05-02-21', '09-02-21',1);
+
+
+CREATE TABLE IF NOT EXISTS public.pertenece(
+  nrofac INT NOT NULL,
+  idejemplar INT NOT NULL,
+  isbn VARCHAR(18) NOT NULL,
+  CONSTRAINT fk_pertenece_alquiler
+    FOREIGN KEY (nrofac)
+	 REFERENCES public.alquiler(nrofac)
+	 ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+CONSTRAINT fk_pertence_ejemplar    
+FOREIGN KEY (idejemplar , isbn)
+    REFERENCES ejemplar (idejemplar , isbn)
+   
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+ALTER TABLE public.pertenece ADD CONSTRAINT Pk_pertenece PRIMARY KEY(idejemplar, isbn, nrofac);
+
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (10,1,'84-95594-07-02');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (11,1,'978-84-339-9788');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (12,2,'84-95594-07-02'); 
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (13,1,'904-013-3039-788');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (14,1,'741-955-044-102');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (15,2,'741-955-044-102');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (16,3,'84-95594-07-02');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (17,2,'978-84-339-9788');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (18,2,'904-013-3039-788');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (19,3,'904-013-3039-788');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (20,4,'904-013-3039-788');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (21,5,'904-013-3039-788');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (22,1,'950-731-490-3');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (23,2,'950-731-490-3');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (24,4,'84-95594-07-02');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (25,1,'955-733-510-789');
+INSERT INTO public.pertenece (nrofac,idejemplar,isbn) VALUES (26,2,'955-733-510-789');

@@ -1,0 +1,176 @@
+Select * from Clientes
+order by NYAPE ASC
+1
+---------------------
+select * from Articulos
+where stock < PTO_REPOSICION
+order by Articulos DESC
+2
+---------------------
+select * from Clientes
+where Localidad ilike '%Capital%'
+3
+---------------------
+select * from Clientes
+where Localidad ilike '%Capital%'
+and SaldoCli > 0 
+4
+---------------------
+select D.articulo, count(articulo) as cant from Facturas F, Detalles D
+where F.nrofactura = D.nrofactura
+and F.fecha between '2010-03-01' and '2010-03-31'
+group by D.articulo
+order by cant desc
+3
+---------------------
+select f.fecha, sum(D.cantidad * A.Precio) from Detalles D, Facturas F, Articulos A
+where F.nrofactura = D.nrofactura
+and D.Articulo = A.nroartic
+and Fecha between '2010-04-01' and '2010-04-30' 
+group by f.fecha
+5
+---------------------
+6
+Select f.fecha, sum(a.precio * d.cantidad) from Detalles d, Articulos a, Facturas f
+where f.nrofactura = d.nrofactura
+and d.articulo = a.nroartic
+and f.fecha between '2010-04-01' and '2010-04-30' 
+group by f.fecha
+--------------------
+7
+Select f.fecha, sum(a.precio * d.cantidad) from Detalles d, Articulos a, Facturas f
+where f.nrofactura = d.nrofactura
+and d.articulo = a.nroartic
+group by f.fecha
+having sum(a.precio * d.cantidad) > 200
+---------------------
+8
+Select f.fecha, sum(a.precio * d.cantidad) from Detalles d, Articulos a, Facturas f
+where f.nrofactura = d.nrofactura
+and d.articulo = a.nroartic
+group by f.fecha
+having sum(a.precio * d.cantidad) = 429
+----------------------
+9
+Select DISTINCT r.cod_rubro, r.descripcion from rubros r, articulos a, detalles d,facturas f
+where  a.nroartic = d.articulo
+and d.nrofactura = f.nrofactura
+and a.rubro = r.cod_rubro
+and f.fecha between '2010-04-15' and '2010-04-30'
+----------------------
+10 
+Select distinct c.nrocli, c.nyape from Clientes c, Facturas f,Articulos a,Detalles d
+where c.nrocli = f.cliente
+and f.nrofactura = d.nrofactura
+and d.articulo = a.nroartic
+and f.fecha between '2010-03-01' and '2010-04-30'
+and a.rubro = '3'
+order by c.nrocli Asc
+----------------------
+11
+Select distinct c.nrocli, c.nyape, count(d.nrofactura) from Clientes c, Facturas f,Articulos a,Detalles d
+where c.nrocli = f.cliente
+and f.nrofactura = d.nrofactura
+and d.articulo = a.nroartic
+and f.fecha between '2010-03-01' and '2010-04-30'
+and a.rubro = '3'
+group by c.nrocli
+having count (d.nrofactura) > 2
+order by c.nrocli asc
+---------------------
+12
+Select cantidad from Articulos a, Detalles d, Facturas f
+where d.articulo = a.nroartic
+and f.nrofactura = d.nrofactura
+and a.nroartic = '4040'
+and f.fecha between '2010-03-01' and '2010-03-31' 
+---------------------
+13
+Select distinct f.nrofactura from Articulos a, Detalles d, Facturas f
+where f.nrofactura = d.nrofactura
+and d.articulo = a.nroartic
+and a.rubro = '3'
+---------------------
+14
+Select avg(cantidad * precio) from Articulos a ,Facturas f ,Detalles d
+where a.nroartic = d.articulo
+and d.nrofactura = f.nrofactura
+and f.fecha between '2010-03-01' and '2010-03-31'
+----------------------
+15
+Select c.nrocli, c.nyape, sum(a.precio * d.cantidad) from Clientes c, Articulos a, Detalles d, Facturas f
+where c.nrocli = f.cliente
+and f.nrofactura = d.nrofactura
+and d.articulo = a.nroartic
+and f.fecha between '2010-05-01' and '2010-05-31'
+group by c.nrocli
+having sum (a.precio * d.cantidad) > 150
+
+
+Select c.nrocli, c.nyape from Clientes c, Articulos a, Detalles d, Facturas f
+where c.nrocli = f.cliente
+and f.nrofactura = d.nrofactura
+and d.articulo = a.nroartic
+and (sum(a.precio * d.cantidad) and f.fecha between '2010-05-01' and '2010-05-31')>
+    (sum(a.precio * d.cantidad) and f.fecha between '2010-04-01' and '2010-04-30')
+----------------------------
+16
+Select * from Articulos a
+where stock < PTO_REPOSICION 
+and not exists (Select 1 From Detalles d, Facturas f 
+where a.nroartic = d.articulo
+and d.nrofactura = f.nrofactura
+and f.fecha between '2010-06-01' and '2010-06-30'
+)
+---------------------------
+17
+Select * from Articulos 
+where precio > (select avg(precio)/2  from Articulos)
+and pto_reposicion > '200'
+----------------------------
+18
+Select D.nrofactura, sum(A.precio * D.cantidad) from Facturas F, Detalles D, Articulos A
+where F.nrofactura = D.nrofactura
+and A.nroartic = D.articulo
+group by D.nrofactura
+having sum(precio * cantidad) > '200'
+and D.nrofactura in ( 
+	       select f.nrofactura  from facturas f, detalles d
+	       where f.nrofactura = d.nrofactura
+	       group by f.nrofactura
+	       having sum(cantidad) > '30')
+----------------------------
+19
+Select distinct D.nrofactura, sum(A.precio * D.cantidad) from Facturas F, Detalles D, Articulos A
+where F.nrofactura = D.nrofactura
+and A.nroartic = D.articulo
+group by D.nrofactura
+having sum(precio * cantidad) > (select avg(stock)*0.05 from rubros r, articulos a
+				where a.rubro = r.cod_rubro
+				and r.descripcion ilike '%Herramienta%')
+					
+------------------------------
+20
+Select * from Clientes C
+where not exists (Select a.nroartic from Articulos a 
+		  where not exists (Select 1 From detalles d, facturas f
+				    where d.nrofactura = f.nrofactura
+				    and f.cliente = c.nrocli
+				    and d.articulo = a.nroartic))
+
+Select * from Clientes C
+where not exists (Select c.nrocli from  Rubros r 
+		  where r.descripcion ilike 'Tornillos'
+		  and not exists (Select d.articulo From Facturas f, Detalles  d, Articulos a
+				 where C.nrocli = f.cliente 
+				 and f.nrofactura = d.nrofactura
+				 and d.articulo = a.nroartic
+				 and r.cod_rubro = a.rubro
+				 and f.fecha between '2010-06-01' and '2010-06-30'))
+							      
+
+-------------------------------
+21
+ALTER TABLE ARTICULOS ADD COLOR text
+-------------------------------
+				
